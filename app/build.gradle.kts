@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -70,4 +72,6 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.serialization.json)
+    implementation(libs.androidx.security.crypto)
 }
