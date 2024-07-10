@@ -24,7 +24,7 @@ import com.example.ongoings.viewmodel.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginView() {
     val viewModel : LoginViewModel = koinViewModel()
 
     var email by remember { mutableStateOf("") }

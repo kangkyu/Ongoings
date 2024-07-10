@@ -74,4 +74,5 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.serialization.json)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.navigation.compose)
 }
