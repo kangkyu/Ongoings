@@ -13,7 +13,11 @@ fun AppNavigation(navHostController: NavHostController = rememberNavController()
         startDestination = Screens.LoginScreen.route
     ) {
         composable(Screens.LoginScreen.route) {
-            LoginView()
+            LoginView(
+                onLoginSuccess = {
+                    navHostController.navigate(Screens.UserTasksScreen.route)
+                }
+            )
         }
         composable(Screens.UserTasksScreen.route) {
             UserTasksView()
