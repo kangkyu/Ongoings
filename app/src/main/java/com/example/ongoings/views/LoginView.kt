@@ -24,7 +24,9 @@ import com.example.ongoings.viewmodel.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginView(
+    onLoginSuccess: () -> Unit,
+) {
     val viewModel : LoginViewModel = koinViewModel()
 
     var email by remember { mutableStateOf("") }
@@ -79,8 +81,4 @@ fun LoginScreen() {
             Text(it, color = MaterialTheme.colorScheme.error)
         }
     }
-}
-
-fun onLoginSuccess() {
-    // Handle successful login
 }
