@@ -75,4 +75,26 @@ class TasksViewModel: ViewModel(), KoinComponent {
             }
         }
     }
+
+    fun clearTask(taskId: Long) {
+        viewModelScope.launch {
+            val token = tokenManager.getToken()
+            if (token == null) {
+                _isTokenValid.value = false
+                _tasksUIState.update {
+                    it.copy(loadingState = LoadingState.Error, error = "No token available")
+                }
+                return@launch
+            }
+            SessionDoAPI.shared.clearTask(taskId, token).onSuccess { success ->
+                if (success) {
+                    getTasks()
+                } else {
+                    _tasksUIState.update {
+                        it.copy(loadingState = LoadingState.Error, error = "Failed to clear task")
+                    }
+                }
+            }
+        }
+    }
 }

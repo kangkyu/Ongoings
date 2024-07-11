@@ -43,6 +43,19 @@ class SessionDoAPI {
         }
     }
 
+    suspend fun clearTask(taskId: Long, tokenString: String): Result<Boolean> {
+        return runCatching {
+            val response: HttpResponse = client.post("$baseUrl/api/tasks/${taskId}/clear") {
+                headers {
+                    append(HttpHeaders.UserAgent, "Android Ktor")
+                    append(HttpHeaders.Authorization, "Bearer $tokenString")
+                }
+            }
+
+            response.status == HttpStatusCode.NoContent
+        }
+    }
+
     suspend fun getTasks(tokenString: String): Result<List<Task>> {
         return try {
             val response: HttpResponse = client.get("${baseUrl}/api/tasks") {

@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 data class Task(
+    @SerialName("id")
+    val id: Long,
     @SerialName("name")
     val name: String,
     @SerialName("comment")
