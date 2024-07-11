@@ -86,35 +86,40 @@ fun TasksGrid(tasks: List<Task>, clickTitleFunc: (Task) -> Unit) {
         items(
             items = tasks,
             itemContent = { task ->
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.surface)
-                            .padding(14.dp)
-                            .clickable {
-                                // start VideoActivity and pass the video details
-                                clickTitleFunc(task)
-                            },
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Text(
-                            text = task.name,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = task.comment,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp
-                        )
-                    }
-                    LinearDeterminateIndicator(task.done_at)
-                }
+                TaskItem(task, clickTitleFunc)
             }
         )
+    }
+}
+
+@Composable
+fun TaskItem(task: Task, clickTitleFunc: (Task) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Row(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(14.dp)
+                .clickable {
+                    // start VideoActivity and pass the video details
+                    clickTitleFunc(task)
+                },
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = task.name,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp
+            )
+            Text(
+                text = task.comment,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp
+            )
+        }
+        LinearDeterminateIndicator(task.done_at)
     }
 }
 
