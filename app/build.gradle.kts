@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ongoings"
+    namespace = "com.lininglink.ongoings"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.ongoings"
+        applicationId = "com.lininglink.ongoings"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
