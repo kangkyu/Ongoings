@@ -77,4 +77,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.ui.text.googlefonts)
+    implementation(libs.compose.lifecycle)
 }

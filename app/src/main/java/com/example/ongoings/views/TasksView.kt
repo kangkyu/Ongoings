@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ongoings.api.LoadingState
 import com.example.ongoings.api.Task
 import com.example.ongoings.viewmodel.TasksViewModel
@@ -43,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun UserTasksView() {
     val viewModel: TasksViewModel = koinViewModel()
-    val uiState by viewModel.tasksUIState.collectAsState()
+    val uiState by viewModel.tasksUIState.collectAsStateWithLifecycle()
 
     when (uiState.loadingState) {
         LoadingState.Loading -> {
