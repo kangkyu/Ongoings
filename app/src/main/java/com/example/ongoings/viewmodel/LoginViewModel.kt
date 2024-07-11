@@ -30,4 +30,8 @@ class LoginViewModel: ViewModel(), KoinComponent {
     fun logout() {
         tokenManager.clearToken()
     }
+
+    fun isLoggedIn(): Boolean {
+        return tokenManager.getToken() != null
+    }
 }

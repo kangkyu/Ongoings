@@ -1,21 +1,51 @@
 package com.example.ongoings.views
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.ongoings.utils.TokenManager
+import com.example.ongoings.viewmodel.LoginViewModel
+import com.example.ongoings.viewmodel.TasksViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun AppNavigation(navHostController: NavHostController = rememberNavController()) {
+    val loginViewModel: LoginViewModel = koinViewModel()
+    val tasksViewModel: TasksViewModel = koinViewModel()
+
+    val startDestination = remember(loginViewModel) {
+        if (loginViewModel.isLoggedIn()) Screens.UserTasksScreen.route else Screens.LoginScreen.route
+    }
+
+    val isTokenValid by tasksViewModel.isTokenValid.collectAsState()
+
+    LaunchedEffect(isTokenValid) {
+        if (!isTokenValid) {
+            navHostController.navigate(Screens.LoginScreen.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
+
     NavHost(
         navController = navHostController,
-        startDestination = Screens.LoginScreen.route
+        startDestination = startDestination
     ) {
         composable(Screens.LoginScreen.route) {
             LoginView(
                 onLoginSuccess = {
-                    navHostController.navigate(Screens.UserTasksScreen.route)
+                    // popUpTo() prevents the user from navigating back to the login screen
+                    // by pressing the back button after they've successfully logged in.
+                    navHostController.navigate(Screens.UserTasksScreen.route) {
+                        popUpTo(Screens.LoginScreen.route) { inclusive = true }
+                    }
                 }
             )
         }
