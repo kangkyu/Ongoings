@@ -1,5 +1,8 @@
 package com.lininglink.ongoings.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lininglink.ongoings.api.LoadingState
@@ -15,6 +18,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class TasksViewModel: ViewModel(), KoinComponent {
+    var isRefreshing by mutableStateOf(false)
+
     private val tokenManager: TokenManager by inject()
 
     private val _isTokenValid = MutableStateFlow(true)
@@ -25,6 +30,15 @@ class TasksViewModel: ViewModel(), KoinComponent {
 
     init {
         getTasks()
+    }
+
+    fun refresh() {
+        isRefreshing = true
+        try {
+            getTasks()
+        } finally {
+            isRefreshing = false
+        }
     }
 
     private fun getTasks() {

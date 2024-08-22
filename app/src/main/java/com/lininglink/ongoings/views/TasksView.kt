@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -39,7 +40,9 @@ import com.lininglink.ongoings.api.LoadingState
 import com.lininglink.ongoings.api.Task
 import com.lininglink.ongoings.viewmodel.TasksViewModel
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserTasksView() {
     val viewModel: TasksViewModel = koinViewModel()
@@ -56,11 +59,17 @@ fun UserTasksView() {
         }
 
         LoadingState.Success -> {
-            TasksGrid(
-                tasks = uiState.tasks,
-                clickTitleFunc = {},
-                onClear = { task -> viewModel.clearTask(task.id) }
-            )
+            PullToRefreshBox(
+                modifier = Modifier.fillMaxSize(),
+                isRefreshing = viewModel.isRefreshing,
+                onRefresh = { viewModel.refresh() },
+            ) {
+                TasksGrid(
+                    tasks = uiState.tasks,
+                    clickTitleFunc = {},
+                    onClear = { task -> viewModel.clearTask(task.id) }
+                )
+            }
         }
 
         LoadingState.Failure -> {
