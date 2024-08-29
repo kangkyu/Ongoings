@@ -48,7 +48,13 @@ fun AppNavigation(navHostController: NavHostController = rememberNavController()
             )
         }
         composable(Screens.UserTasksScreen.route) {
-            UserTasksView()
+            UserTasksView(
+                goToLogin = {
+                    navHostController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.UserTasksScreen.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

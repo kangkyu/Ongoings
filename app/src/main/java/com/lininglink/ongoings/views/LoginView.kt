@@ -38,7 +38,7 @@ fun LoginView(
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         OutlinedTextField(
             value = email,
@@ -62,8 +62,8 @@ fun LoginView(
         Button(
             onClick = {
                 viewModel.login(
-                    email,
-                    password,
+                    email.trim(),
+                    password.trim(),
                     onSuccess = {
                         error = null
                         onLoginSuccess()
