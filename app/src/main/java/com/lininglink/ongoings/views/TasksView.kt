@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -44,7 +45,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserTasksView() {
+fun UserTasksView(
+    goToLogin: () -> Unit
+) {
     val viewModel: TasksViewModel = koinViewModel()
     val uiState by viewModel.tasksUIState.collectAsStateWithLifecycle()
 
@@ -67,7 +70,11 @@ fun UserTasksView() {
                 TasksGrid(
                     tasks = uiState.tasks,
                     clickTitleFunc = {},
-                    onClear = { task -> viewModel.clearTask(task.id) }
+                    onClear = { task -> viewModel.clearTask(task.id) },
+                    onLogout = {
+                        viewModel.logout()
+                        goToLogin()
+                    }
                 )
             }
         }
@@ -88,7 +95,12 @@ fun UserTasksView() {
 }
 
 @Composable
-fun TasksGrid(tasks: List<Task>, clickTitleFunc: (Task) -> Unit, onClear: (Task) -> Unit) {
+fun TasksGrid(
+    tasks: List<Task>,
+    clickTitleFunc: (Task) -> Unit,
+    onClear: (Task) -> Unit,
+    onLogout: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -102,6 +114,39 @@ fun TasksGrid(tasks: List<Task>, clickTitleFunc: (Task) -> Unit, onClear: (Task)
                 TaskItem(task, clickTitleFunc, onClear)
             }
         )
+        item {
+            LogoutItem(onLogout = onLogout)
+        }
+    }
+}
+
+@Composable
+fun LogoutItem(onLogout: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.surface)
+            .padding(14.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Row(
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledIconButton(
+                onClick = {
+                    onLogout()
+                },
+                modifier = Modifier.size(19.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null
+                )
+            }
+            Text(" Logout")
+        }
     }
 }
 
