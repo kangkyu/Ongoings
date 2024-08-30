@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -129,23 +129,23 @@ fun LogoutItem(onLogout: () -> Unit) {
             .padding(14.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+        FilledIconButton(
+            onClick = {
+                onLogout()
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            FilledIconButton(
-                onClick = {
-                    onLogout()
-                },
-                modifier = Modifier.size(19.dp)
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.Warning,
                     contentDescription = null
                 )
+                Text(" Logout")
             }
-            Text(" Logout")
         }
     }
 }

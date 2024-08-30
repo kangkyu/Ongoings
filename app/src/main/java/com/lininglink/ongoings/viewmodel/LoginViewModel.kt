@@ -11,11 +11,12 @@ import org.koin.core.component.inject
 
 class LoginViewModel: ViewModel(), KoinComponent {
     private val tokenManager: TokenManager by inject()
+    private val sessionDoAPI: SessionDoAPI by inject()
 
     fun login(email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                SessionDoAPI.shared.login(LoginRequest(email, password)).onSuccess { user ->
+                sessionDoAPI.login(LoginRequest(email, password)).onSuccess { user ->
                     tokenManager.saveToken(user.token)
                     onSuccess()
                 }.onFailure { failed ->
