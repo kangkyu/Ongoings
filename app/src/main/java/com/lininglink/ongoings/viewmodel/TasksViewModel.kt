@@ -21,6 +21,7 @@ class TasksViewModel: ViewModel(), KoinComponent {
     var isRefreshing by mutableStateOf(false)
 
     private val tokenManager: TokenManager by inject()
+    private val sessionDoAPI: SessionDoAPI by inject()
 
     private val _isTokenValid = MutableStateFlow(true)
     val isTokenValid = _isTokenValid.asStateFlow()
@@ -55,7 +56,7 @@ class TasksViewModel: ViewModel(), KoinComponent {
                     return@launch
                 }
 
-                SessionDoAPI.shared.getTasks(token).onSuccess { value ->
+                sessionDoAPI.getTasks(token).onSuccess { value ->
                     _tasksUIState.update {
                         it.copy(loadingState = LoadingState.Success, tasks = value)
                     }
@@ -100,7 +101,7 @@ class TasksViewModel: ViewModel(), KoinComponent {
                 }
                 return@launch
             }
-            SessionDoAPI.shared.clearTask(taskId, token).onSuccess { success ->
+            sessionDoAPI.clearTask(taskId, token).onSuccess { success ->
                 if (success) {
                     getTasks()
                 } else {

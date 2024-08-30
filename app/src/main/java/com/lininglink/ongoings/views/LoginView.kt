@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.lininglink.ongoings.ui.theme.AppTypography
 import com.lininglink.ongoings.viewmodel.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -40,6 +41,12 @@ fun LoginView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = "Log in",
+            style = AppTypography.displayMedium,
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -73,7 +80,10 @@ fun LoginView(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
+            Text(
+                text = "Login",
+                style = AppTypography.bodyMedium
+            )
         }
 
         error?.let {

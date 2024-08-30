@@ -10,79 +10,83 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 private const val baseUrl = "https://sessions-to-do.herokuapp.com"
 
 class SessionDoAPI {
-    companion object {
-        val shared = SessionDoAPI()
-    }
-
     private val client = HttpClient()
 
     suspend fun login(loginRequest: LoginRequest): Result<LoginResponse> {
         return runCatching {
-            val response: HttpResponse = client.post("$baseUrl/api/session") {
-                headers {
-                    append(HttpHeaders.Accept, "application/json")
-                    append(HttpHeaders.ContentType, "application/json")
-                    append(HttpHeaders.UserAgent, "Android Ktor")
+            withContext(context = Dispatchers.IO) {
+
+                val response: HttpResponse = client.post("$baseUrl/api/session") {
+                    headers {
+                        append(HttpHeaders.Accept, "application/json")
+                        append(HttpHeaders.ContentType, "application/json")
+                        append(HttpHeaders.UserAgent, "Android Ktor")
+                    }
+                    setBody(Json.encodeToString(LoginRequest.serializer(), loginRequest))
                 }
-                setBody(Json.encodeToString(LoginRequest.serializer(), loginRequest))
-            }
 
-            // client.close()
-            // commented out to avoid JobCancellationException
-
-            if (response.status == HttpStatusCode.OK) {
-                Json.decodeFromString<LoginResponse>(response.body())
-            } else {
-                throw Exception("Login response ${response.status.value}")
+                if (response.status == HttpStatusCode.OK) {
+                    Json.decodeFromString<LoginResponse>(response.body())
+                } else {
+                    throw Exception("Login response ${response.status.value}")
+                }
             }
         }
     }
 
     suspend fun clearTask(taskId: Long, tokenString: String): Result<Boolean> {
         return runCatching {
-            val response: HttpResponse = client.post("$baseUrl/api/tasks/${taskId}/clear") {
-                headers {
-                    append(HttpHeaders.UserAgent, "Android Ktor")
-                    append(HttpHeaders.Authorization, "Bearer $tokenString")
+            withContext(Dispatchers.IO) {
+                val response: HttpResponse = client.post("$baseUrl/api/tasks/${taskId}/clear") {
+                    headers {
+                        append(HttpHeaders.UserAgent, "Android Ktor")
+                        append(HttpHeaders.Authorization, "Bearer $tokenString")
+                    }
                 }
-            }
 
-            response.status == HttpStatusCode.NoContent
+                response.status == HttpStatusCode.NoContent
+            }
         }
     }
 
     suspend fun getTasks(tokenString: String): Result<List<Task>> {
-        return try {
-            val response: HttpResponse = client.get("${baseUrl}/api/tasks") {
-                headers {
-                    append(HttpHeaders.Accept, "application/json")
-                    append(HttpHeaders.ContentType, "application/json")
-                    append(HttpHeaders.UserAgent, "Android Ktor")
-                    append(HttpHeaders.Authorization, "Bearer $tokenString")
+        return runCatching {
+            withContext(Dispatchers.IO) {
+                val response: HttpResponse = client.get("${baseUrl}/api/tasks") {
+                    headers {
+                        append(HttpHeaders.Accept, "application/json")
+                        append(HttpHeaders.ContentType, "application/json")
+                        append(HttpHeaders.UserAgent, "Android Ktor")
+                        append(HttpHeaders.Authorization, "Bearer $tokenString")
+                    }
                 }
-            }
 
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    val tasksJson = response.bodyAsText()
-                    val jsonBuilder = Json { ignoreUnknownKeys = true }
-                    val tasks = jsonBuilder.decodeFromString<List<Task>>(tasksJson)
-                    Result.success(tasks)
-                }
-                HttpStatusCode.Unauthorized -> {
-                    Result.failure(SessionDoUnauthorizedException("Invalid or expired token"))
-                }
-                else -> {
-                    Result.failure(SessionDoHttpException(response.status, "Unexpected response: ${response.status}"))
+                when (response.status) {
+                    HttpStatusCode.OK -> {
+                        val tasksJson = response.bodyAsText()
+                        val jsonBuilder = Json { ignoreUnknownKeys = true }
+                        jsonBuilder.decodeFromString<List<Task>>(tasksJson)
+                    }
+
+                    HttpStatusCode.Unauthorized -> {
+                        throw SessionDoUnauthorizedException("Invalid or expired token")
+                    }
+
+                    else -> {
+                        throw SessionDoHttpException(
+                            response.status,
+                            "Unexpected response: ${response.status}"
+                        )
+                    }
                 }
             }
-        } catch(e: Exception) {
-            Result.failure(e)
         }
     }
 }
